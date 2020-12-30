@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+    <!-- ... -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/tailwind.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="simple"></div>
+</body>
+<script>
+    let today = new Date();
+    let _year = today.getFullYear(),
+        monthsName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    let _date = { day: today.getDay, month: today.getMonth, year: today.getFullYear() };
+    let years = [(_year - 8), _year], handler;
+
+    
+    // Third Stage --- Display Days
+    const days = (year, month) => {
+        // Set DOM empty
+        handler.innerHTML = '';
+        _date.year = year;
+        _date.month = month;
+        let days = new Date(year, month, 0).getDate(),
+            days_offset = new Date(year, month - 1, 1).getDay(),
+            filler = ('<div></div>').repeat(days_offset),
+            data = '<div class="w-56 grid grid-cols-7 gap-3">' + filler;
+        for (let day = 1; day <= days; day++) {
+            data += `<div class="flex items-center justify-center" onclick="render(${year}, ${month}, ${day})">${day}</div> `;
+        }
+        handler.innerHTML += data + '</div>';
+    }
+
+    
+    // Second Stage --- Display Months
+    const months = (year) => {
+        handler.innerHTML = '';
+        let months = 12;
+        // _year = year;
+        data = `<button onclick="months(--_year)" class="p-3"><</button><div class="inline-block text-center w-36">${year}</div><button onclick="months(++_year)" class="p-3">></button>`;
+        data += '<div class="w-56 grid grid-cols-3 gap-3">';
+        for (let month = 0; month < months; month++) {
+            data += ` <div class="flex items-center justify-center" onclick="days(${year},${month+1})">${monthsName[month]}</div> `;
+        }
+        handler.innerHTML += data + '</div>';
+    }
+
+    
+
+    // First Stage --- Display Year Range  // Select the year
+    const year_range = () => {
+        let years_set = [];
+        handler.innerHTML = '';
+        data = `<button onclick="range_prev()" class="p-3"><</button><div class="inline-block text-center w-36">${years[0]} - ${years[1]}</div><button onclick="range_next()" class="p-3"> ></button >`;
+        data += '<div class="w-56 grid grid-cols-3 gap-3">';
+        for (let index = years[0]; index <= years[1]; index++) {
+            data += ` <a onclick="months(${index})">${index}</a> `;
+        }
+        handler.innerHTML += data + '</div>';
+    }
+   
+
+    const range_prev = () => {
+        years[0] -= 9;
+        years[1] -= 9;
+        year_range()
+    }
+    const range_next = () => {
+        years[0] += 9;
+        years[1] += 9;
+        year_range()
+    }
+
+
+    
+    // Final Stage
+    function render(year, month, day) {
+        _date.day = day, _date.month = month, _date.year = year;
+        year_range() 
+        console.log(_date)
+    }
+
+    const calender = (handle) => {
+        handler = document.getElementById(handle);
+        year_range();
+    }
+
+    calender('simple');
+</script>
+</html>
